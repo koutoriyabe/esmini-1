@@ -2,6 +2,13 @@
 
 Plot::Plot(std::vector<scenarioengine::Object*> objects)
 {
+    bool_array_size_ = objects.size();
+    selectedItem = new bool[objects.size()];
+    for (size_t i = 0; i < bool_array_size_; i++)
+    {
+        (i == 0) ? selectedItem[i] = true : selectedItem[i] = false;
+    }
+
     for (const auto& object: objects)
     {
         plotObjects.emplace_back(std::make_unique<PlotObject>(object->GetMaxAcceleration(), object->GetMaxDeceleration(), object->GetMaxSpeed()));
@@ -34,6 +41,11 @@ Plot::Plot(std::vector<scenarioengine::Object*> objects)
     #endif
 }
 
+Plot::~Plot()
+{
+    delete[] selectedItem;
+}
+
 void Plot::updateData(std::vector<Object*> objects, double dt)
 {
     for (size_t i = 0; i < objects.size(); i++)
@@ -49,15 +61,35 @@ void Plot::renderPlot(const char* name, float window_width, float window_height)
     ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiCond_Once);
     ImGui::Begin(name, nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoTitleBar);
 
-    if (ImGui::IsKeyPressed(ImGuiKey_Tab))
+    // Make checkboxes
+    for (size_t i = 0; i < bool_array_size_; i++)
     {
-        selection += 1;
-        if (selection > plotObjects.size() - 1)
+        ImGui::Checkbox(("Object " + std::to_string(i)).c_str(), &selectedItem[i]);
+        if (i < bool_array_size_ - 1)
         {
-            selection = 0;
+            ImGui::SameLine();
         }
     }
-    // for (size_t i = 0; i < plotObjects.size(); i++)
+
+    // Check which ones is currently selected and recently updated
+    for (size_t i = 0; i < bool_array_size_; i++)
+    {
+        if (selectedItem[i] && i != selection)
+        {
+            selection = i;
+            break;
+        }
+    }
+    
+    // Set all not-recently checked boxes to false, only allow 1 checked box at a time (for now)
+    for (size_t j = 0; j < bool_array_size_; j++)
+    {
+        if (j != selection)
+        {
+            selectedItem[j] = false;
+        }
+    }
+
     for (const auto& d : plotObjects[selection]->plotData)
     {
         // Adjust axes

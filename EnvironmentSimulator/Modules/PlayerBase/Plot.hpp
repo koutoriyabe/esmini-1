@@ -41,6 +41,7 @@ enum class PlotCategories {
 class Plot {
     public:
         Plot(std::vector<Object*> objects);
+        ~Plot();
 
         void updateData(std::vector<Object*> objects, double dt);
         void renderPlot(const char* name, float window_width, float window_height);
@@ -83,6 +84,8 @@ class Plot {
         ImPlotAxisFlags y_scaling = ImPlotAxisFlags_None;
 
         // Object selection
+        size_t bool_array_size_;
+        bool* selectedItem;
         unsigned int selection = 0;
 };
 

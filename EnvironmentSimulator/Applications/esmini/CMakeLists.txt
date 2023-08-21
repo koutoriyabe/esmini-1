@@ -23,7 +23,7 @@ else()
     message(STATUS "Found ${mygl}")
 endif()
 
-# set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -I/home/slundel6/esmini/externals/imgui/imgui -I/home/slundel6/esmini/externals/imgui/backends")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -I/home/slundel6/esmini/externals/imgui/imgui -I/home/slundel6/esmini/externals/imgui/backends")
 file(GLOB srcs /home/slundel6/esmini/externals/imgui/imgui/*.cpp)
 file(GLOB bsrcs /home/slundel6/esmini/externals/imgui/backends/*.cpp)
 add_library(imgui-objects OBJECT ${srcs} ${bsrcs})
