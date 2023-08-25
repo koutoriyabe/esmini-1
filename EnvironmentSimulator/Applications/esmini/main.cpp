@@ -65,8 +65,11 @@ static int execute_scenario(int argc, char* argv[])
 
     // Initialize ImPlot
     Plot plot(player->scenarioEngine->entities_.object_);
-    std::thread thread1(&Plot::renderImguiWindow, &plot);//, std::ref(promise1));
-    thread1.detach();
+    if (player->opt.GetOptionSet("plot"))
+    {
+        std::thread thread1(&Plot::renderImguiWindow, &plot);//, std::ref(promise1));
+        thread1.detach();
+    }
 
     while (!player->IsQuitRequested() && !quit && retval == 0)
     {
@@ -80,7 +83,7 @@ static int execute_scenario(int argc, char* argv[])
             dt = SE_getSimTimeStep(time_stamp, player->minStepSize, player->maxStepSize);
         }
 
-        if (!player->IsPaused())
+        if (player->opt.GetOptionSet("plot") && !player->IsPaused())
             plot.updateData(player->scenarioEngine->entities_.object_, dt);
 
         retval = player->Frame(dt);
@@ -91,6 +94,9 @@ static int execute_scenario(int argc, char* argv[])
         // Single permutation requested and executed, quit now
         quit = true;
     }
+
+    plot.CleanUp();
+    // thread1.join();
 
     return retval;
 }

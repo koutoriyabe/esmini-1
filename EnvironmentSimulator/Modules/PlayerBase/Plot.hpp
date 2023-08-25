@@ -35,6 +35,7 @@ enum class PlotCategories {
     LatA,
     LongA,
     LaneOffset,
+    LaneID,
 };
 
 
@@ -42,6 +43,7 @@ class Plot {
     public:
         Plot(std::vector<Object*> objects);
         ~Plot();
+        void CleanUp();
 
         void updateData(std::vector<Object*> objects, double dt);
         void renderPlot(const char* name, float window_width, float window_height);
@@ -75,6 +77,9 @@ class Plot {
         // GLFW, glsl
         const char* glsl_version{};
         GLFWwindow* window;
+        int window_width = 800;
+        int window_height = 1000;
+        const float checkbox_padding = 55.0;
 
         // Variables
         std::vector<std::unique_ptr<PlotObject>> plotObjects;
@@ -82,11 +87,13 @@ class Plot {
         // Settings
         ImPlotAxisFlags x_scaling = ImPlotAxisFlags_None;
         ImPlotAxisFlags y_scaling = ImPlotAxisFlags_None;
+        const int lineplot_height = 150;
 
         // Object selection
         size_t bool_array_size_;
         bool* selectedItem;
         unsigned int selection = 0;
+        bool lineplot_selection = true;
 };
 
 #endif // PLOT_H

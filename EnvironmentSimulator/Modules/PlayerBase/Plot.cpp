@@ -46,6 +46,22 @@ Plot::~Plot()
     delete[] selectedItem;
 }
 
+void Plot::CleanUp()
+{
+    #ifdef __EMSCRIPTEN__
+    EMSCRIPTEN_MAINLOOP_END;
+    #endif
+
+    // Cleanup
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui_ImplGlfw_Shutdown();
+    ImPlot::DestroyContext();
+    ImGui::DestroyContext();
+
+    glfwDestroyWindow(window);
+    glfwTerminate();
+}
+
 void Plot::updateData(std::vector<Object*> objects, double dt)
 {
     for (size_t i = 0; i < objects.size(); i++)
@@ -54,10 +70,11 @@ void Plot::updateData(std::vector<Object*> objects, double dt)
     }
 }
 
-void Plot::renderPlot(const char* name, float window_width, float window_height)
+void Plot::renderPlot(const char* name, float window_w, float window_h)
 {
     std::string plot_name = "";
-    ImGui::SetNextWindowSize(ImVec2(window_width, window_height), ImGuiCond_Once);
+    int lineplot_objects = plotObjects[0]->plotData.size() - 1; // Time has no own plot
+    ImGui::SetNextWindowSize(ImVec2(window_w, window_h), ImGuiCond_Once);
     ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiCond_Once);
     ImGui::Begin(name, nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoTitleBar);
 
@@ -89,6 +106,10 @@ void Plot::renderPlot(const char* name, float window_width, float window_height)
             selectedItem[j] = false;
         }
     }
+    // ImGui::End();
+    // ImGui::Begin("Scrollable");
+    // ImGui::SetNextWindowSize(ImVec2(window_width, window_height), ImGuiCond_Once);
+    // ImGui::BeginChild("ScrollingRegion", ImVec2(window_width, window_height), false, ImGuiWindowFlags_HorizontalScrollbar);
 
     for (const auto& d : plotObjects[selection]->plotData)
     {
@@ -131,33 +152,44 @@ void Plot::renderPlot(const char* name, float window_width, float window_height)
             case(PlotCategories::LaneOffset):
             {
                 plot_name = "Offset from current lane";
+                // lineplot_selection = false;
                 ImPlot::SetNextAxesLimits(-5.0f, plotObjects[selection]->getTimeMax(), -2.5, 2.5);
+                break;
+            }
+            case(PlotCategories::LaneID):
+            {
+                plot_name = "Lane ID";
+                // lineplot_selection = false;
+                float y_values = abs(d.second.back());
+                ImPlot::SetNextAxesLimits(-5.0f, plotObjects[selection]->getTimeMax(), -y_values - 1, y_values + 1);
                 break;
             }
         }
 
 
         // Plot (but not time over time or X over X)
-        if (d.first == PlotCategories::Time)
+        if (d.first == PlotCategories::Time || !lineplot_selection)
         {
+            lineplot_selection = true;
             continue;
         }
         else
         {
-            ImPlot::BeginPlot(plot_name.c_str(), ImVec2(-1, 150));
+            ImPlot::BeginPlot(plot_name.c_str(), ImVec2(-1, (window_h - checkbox_padding) / lineplot_objects));
             ImPlot::SetupAxes("x", "y", x_scaling, y_scaling);
             ImPlot::PlotLine(("Object " + std::to_string(selection)).c_str(), plotObjects[selection]->plotData.at(PlotCategories::Time).data(), d.second.data(), static_cast<int>(plotObjects[selection]->plotData.at(PlotCategories::Time).size()));
             ImPlot::EndPlot();
         }
     // ImPlot::SetNextMarkerStyle(ImPlotMarker_Circle);
     }
+    // ImGui::EndChild();
     ImGui::End();
 }
 
 void Plot::renderImguiWindow()
 {
     // Create window with graphics context
-    window = glfwCreateWindow(800, 900, "Lineplot", nullptr, nullptr);
+    window = glfwCreateWindow(window_width, window_height, "Lineplot", nullptr, nullptr);
     if (window == nullptr)
         std::cerr << "Something is wrong in IMGUI, cant create window!" << std::endl;
     glfwMakeContextCurrent(window);
@@ -210,18 +242,7 @@ void Plot::renderImguiWindow()
         glfwSwapBuffers(window);
     }
 
-    #ifdef __EMSCRIPTEN__
-    EMSCRIPTEN_MAINLOOP_END;
-    #endif
-
-    // Cleanup
-    ImGui_ImplOpenGL3_Shutdown();
-    ImGui_ImplGlfw_Shutdown();
-    ImPlot::DestroyContext();
-    ImGui::DestroyContext();
-
-    glfwDestroyWindow(window);
-    glfwTerminate();
+    CleanUp();
 }
 
 void Plot::glfw_error_callback(int error, const char* description)
@@ -256,6 +277,7 @@ void Plot::PlotObject::updateData(Object* object, double dt)
     plotData[PlotCategories::LongA].push_back(static_cast<float>(long_acc));
     plotData[PlotCategories::LatA].push_back(static_cast<float>(lat_acc));
 
+    plotData[PlotCategories::LaneID].push_back(static_cast<float>(object->pos_.GetLaneId()));
 }
 
 float Plot::PlotObject::getTimeMax() 
