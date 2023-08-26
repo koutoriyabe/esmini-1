@@ -29,14 +29,14 @@
 using namespace scenarioengine;
 
 enum class PlotCategories {
-    Time = 0,
-    LatVel,
+    LatVel = 0,
     LongVel,
     LatA,
     LongA,
     LaneOffset,
     LaneID,
-};
+    Time,
+}; // Keep Time last, used as reference for size of the enum
 
 
 class Plot {
@@ -77,7 +77,7 @@ class Plot {
         // GLFW, glsl
         const char* glsl_version{};
         GLFWwindow* window;
-        int window_width = 800;
+        int window_width = 1000;
         int window_height = 1000;
         const float checkbox_padding = 55.0;
 
@@ -87,13 +87,13 @@ class Plot {
         // Settings
         ImPlotAxisFlags x_scaling = ImPlotAxisFlags_None;
         ImPlotAxisFlags y_scaling = ImPlotAxisFlags_None;
-        const int lineplot_height = 150;
 
         // Object selection
-        size_t bool_array_size_;
-        bool* selectedItem;
+        size_t bool_array_size_ = {};
+        size_t plotcategories_size_ = {};
+        std::vector<char> selectedItem = {};
         unsigned int selection = 0;
-        bool lineplot_selection = true;
+        std::vector<char> lineplot_selection = {};
 };
 
 #endif // PLOT_H

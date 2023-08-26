@@ -2,17 +2,22 @@
 
 Plot::Plot(std::vector<scenarioengine::Object*> objects)
 {
+    // Save some sizes for easier access later
+    plotcategories_size_ = static_cast<size_t>(PlotCategories::Time);
     bool_array_size_ = objects.size();
-    selectedItem = new bool[objects.size()];
-    for (size_t i = 0; i < bool_array_size_; i++)
+
+    // Populate objects we want to plot and default settings for the checkbox selections
+    for (size_t i = 0; i < objects.size(); i++)
     {
-        (i == 0) ? selectedItem[i] = true : selectedItem[i] = false;
+        plotObjects.emplace_back(std::make_unique<PlotObject>(objects[i]->GetMaxAcceleration(), objects[i]->GetMaxDeceleration(), objects[i]->GetMaxSpeed()));
+        (i == 0) ? selectedItem.push_back(true) : selectedItem.push_back(false);
+    }
+    // Set default values for lineplot checkboxes
+    for (size_t i = 0; i < plotcategories_size_; i++)
+    {
+        lineplot_selection.push_back(true);
     }
 
-    for (const auto& object: objects)
-    {
-        plotObjects.emplace_back(std::make_unique<PlotObject>(object->GetMaxAcceleration(), object->GetMaxDeceleration(), object->GetMaxSpeed()));
-    }
     glfwSetErrorCallback(glfw_error_callback);
         if (!glfwInit())
             std::cerr << "Something is wrong in IMGUI, cant init!" << std::endl;
@@ -43,7 +48,7 @@ Plot::Plot(std::vector<scenarioengine::Object*> objects)
 
 Plot::~Plot()
 {
-    delete[] selectedItem;
+    // delete[] selectedItem;
 }
 
 void Plot::CleanUp()
@@ -81,12 +86,23 @@ void Plot::renderPlot(const char* name, float window_w, float window_h)
     // Make checkboxes
     for (size_t i = 0; i < bool_array_size_; i++)
     {
-        ImGui::Checkbox(("Object " + std::to_string(i)).c_str(), &selectedItem[i]);
+        ImGui::Checkbox(("Object " + std::to_string(i)).c_str(), reinterpret_cast<bool*>(&selectedItem[i]));
         if (i < bool_array_size_ - 1)
         {
             ImGui::SameLine();
         }
     }
+    auto store_pos = ImGui::GetCursorPos();
+
+    float y_pos = 10;
+    for (size_t i = 0; i < lineplot_selection.size(); i++)
+    {
+        ImGui::SetCursorPos(ImVec2(820,y_pos));
+        ImGui::Checkbox(("Signal " + std::to_string(i)).c_str(), reinterpret_cast<bool*>(&lineplot_selection[i]));
+        auto box_size = ImGui::CalcTextSize("Signal 0");
+        y_pos += box_size[1] + 10;
+    }
+    ImGui::SetCursorPos(store_pos); // Set the cursor back to where we start drawing the lineplots
 
     // Check which ones is currently selected and recently updated
     for (size_t i = 0; i < bool_array_size_; i++)
@@ -168,14 +184,14 @@ void Plot::renderPlot(const char* name, float window_w, float window_h)
 
 
         // Plot (but not time over time or X over X)
-        if (d.first == PlotCategories::Time || !lineplot_selection)
+        if (d.first == PlotCategories::Time || !lineplot_selection[0])
         {
-            lineplot_selection = true;
+            lineplot_selection[0] = true;
             continue;
         }
         else
         {
-            ImPlot::BeginPlot(plot_name.c_str(), ImVec2(-1, (window_h - checkbox_padding) / lineplot_objects));
+            ImPlot::BeginPlot(plot_name.c_str(), ImVec2(window_w - 200, (window_h - checkbox_padding) / lineplot_objects));
             ImPlot::SetupAxes("x", "y", x_scaling, y_scaling);
             ImPlot::PlotLine(("Object " + std::to_string(selection)).c_str(), plotObjects[selection]->plotData.at(PlotCategories::Time).data(), d.second.data(), static_cast<int>(plotObjects[selection]->plotData.at(PlotCategories::Time).size()));
             ImPlot::EndPlot();
