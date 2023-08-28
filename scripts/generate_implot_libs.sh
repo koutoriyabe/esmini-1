@@ -29,6 +29,12 @@
 PARALLEL_BUILDS=4
 ZIP_MIN_VERSION=12
 
+if (( "$PARALLEL_BUILDS" < 2 )); then
+    PARALLEL_ARG=""
+else
+    PARALLEL_ARG="-j $PARALLEL_BUILDS"
+fi
+
 if [ "$OSTYPE" == "msys" ]; then
     # Visual Studio 2019 - toolkit from Visual Studio 2017
     GENERATOR=("Visual Studio 16 2019")
@@ -103,9 +109,24 @@ echo ------------------------ compile glfw --------------------------------
 cd $implot_root_dir
 mkdir glfw/build;cd glfw/build
 
-cmake .. -G "Visual Studio 16 2019" -T v142 -A x64
-cmake --build . -j $PARALLEL_BUILDS --config Release
-cmake --build . -j $PARALLEL_BUILDS --config Debug
+if [ "$OSTYPE" == "msys" ]; then
+
+    cmake .. -G "${GENERATOR[@]}" ${GENERATOR_ARGUMENTS}
+    cmake --build . $PARALLEL_ARG --config Release
+    cmake --build . $PARALLEL_ARG --config Debug
+
+elif  [[ "$OSTYPE" == "darwin"* ]] || [[ "$OSTYPE" == "linux-gnu"* ]]; then
+
+    cmake -G "${GENERATOR[@]}" ${GENERATOR_ARGUMENTS} -DCMAKE_BUILD_TYPE=Debug .. -DCMAKE_C_FLAGS="-fPIC"
+    cmake --build . $PARALLEL_ARG
+    mv src/libglfw3.a src/libglfw3d.a
+
+    rm CMakeCache.txt
+    cmake -G "${GENERATOR[@]}" ${GENERATOR_ARGUMENTS} -DCMAKE_BUILD_TYPE=Release .. -DCMAKE_C_FLAGS="-fPIC"
+    cmake --build . $PARALLEL_ARG
+
+fi
+
 
 echo ------------------------ compile implot ------------------------------
 
@@ -115,13 +136,18 @@ mkdir build;cd build
 if [ "$OSTYPE" == "msys" ]; then
 
 	cmake .. -G "Visual Studio 16 2019" -T v142 -A x64
-	cmake --build . -j $PARALLEL_BUILDS --config Release
-	cmake --build . -j $PARALLEL_BUILDS --config Debug
-	
+	cmake --build . -j $PARALLEL_ARG --config Release
+	cmake --build . -j $PARALLEL_ARG --config Debug
+
 elif  [[ "$OSTYPE" == "darwin"* ]] || [[ "$OSTYPE" == "linux-gnu"* ]]; then
 
-	cmake ..
-	cmake --build . -j $PARALLEL_BUILDS --config Release
+    cmake -G "${GENERATOR[@]}" ${GENERATOR_ARGUMENTS} -DCMAKE_BUILD_TYPE=Debug .. -DCMAKE_C_FLAGS="-fPIC"
+    cmake --build . $PARALLEL_ARG
+    mv libimplot.a libimplotd.a
+
+    rm CMakeCache.txt
+    cmake -G "${GENERATOR[@]}" ${GENERATOR_ARGUMENTS} -DCMAKE_BUILD_TYPE=Release .. -DCMAKE_C_FLAGS="-fPIC"
+    cmake --build . $PARALLEL_ARG
 
 fi
 
@@ -154,18 +180,22 @@ then
     cp implot/implot_internal.h $target_dir/include/implot
     cp glfw/include/GLFW/glfw3.h $target_dir/include/glfw/GLFW
 	cp glfw/include/GLFW/glfw3native.h $target_dir/include/glfw/GLFW
-    
+
+    echo Copying libs
+
 	if [ "$OSTYPE" == "msys" ]; then
 
 		cp glfw/build/src/Release/glfw3.lib $target_dir/lib
 		cp glfw/build/src/Debug/glfw3.lib $target_dir/lib/glfw3d.lib
 		cp build/Release/implot.lib $target_dir/lib
 		cp build/Debug/implot.lib $target_dir/lib/implotd.lib
-		
+
 	elif  [[ "$OSTYPE" == "darwin"* ]] || [[ "$OSTYPE" == "linux-gnu"* ]]; then
 
-		cmake ..
-		cmake --build . -j $PARALLEL_BUILDS --config Release
+		cp glfw/build/src/libglfw3.a $target_dir/lib
+		cp glfw/build/src/libglfw3d.a $target_dir/lib
+		cp build/libimplot.a $target_dir/lib
+		cp build/libimplotd.a $target_dir/lib
 
 	fi
 
