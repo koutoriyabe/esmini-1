@@ -199,6 +199,11 @@ if(NOT
         ${EXTERNALS_GOOGLETEST_PATH}
         ${EXTERNALS_GOOGLETEST_OS_SPECIFIC_PATH}
         ${GTEST_PACKAGE_URL})
+    download(
+        implot
+        ${EXTERNALS_IMPLOT_PATH}
+        ${EXTERNALS_IMPLOT_OS_SPECIFIC_PATH}
+        ${IMPLOT_PACKAGE_URL})
 endif()
 
 download(

@@ -67,11 +67,11 @@ elif [[ "$OSTYPE" == "darwin"* ]] || [[ "$OSTYPE" == "linux-gnu"* ]]; then
     LIB_PREFIX="lib"
     if [[ "$OSTYPE" == "linux-gnu"* ]]; then
         target_dir="linux"
-        zfilename="osg_linux.7z"
+        zfilename="implot_linux.7z"
         z_exe=7za
     else
         target_dir="mac"
-        zfilename="osg_mac.7z"
+        zfilename="implot_mac.7z"
         z_exe=7z
         macos_arch="arm64;x86_64"
     fi
