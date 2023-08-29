@@ -9,13 +9,13 @@ macro(set_implot_libs)
     elseif(LINUX)
         set(IMPLOT_LIBRARIES
             optimized
-            ${EXTERNALS_IMPLOT_LIBRARY_PATH}/glfw3.a
+            ${EXTERNALS_IMPLOT_LIBRARY_PATH}/libglfw3.a
             debug
-            ${EXTERNALS_IMPLOT_LIBRARY_PATH}/glfw3d.a
+            ${EXTERNALS_IMPLOT_LIBRARY_PATH}/libglfw3d.a
             optimized
-            ${EXTERNALS_IMPLOT_LIBRARY_PATH}/implot.a
+            ${EXTERNALS_IMPLOT_LIBRARY_PATH}/libimplot.a
             debug
-            ${EXTERNALS_IMPLOT_LIBRARY_PATH}/implot.a)
+            ${EXTERNALS_IMPLOT_LIBRARY_PATH}/libimplot.a)
     elseif(MSVC)
         set(IMPLOT_LIBRARIES
             optimized
