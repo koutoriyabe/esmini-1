@@ -7,7 +7,6 @@
 #include <vector>
 #include <random>
 #include <thread>
-#include <chrono>
 #include <tuple>
 #include <unordered_map>
 #define GL_SILENCE_DEPRECATION
@@ -49,6 +48,7 @@ class Plot {
         void renderPlot(const char* name, float window_width, float window_height);
         void renderImguiWindow();
         static void glfw_error_callback(int error, const char* description);
+        void set_quit_flag() {quit_flag_ = true;};
 
     private:
         class PlotObject {
@@ -80,6 +80,7 @@ class Plot {
         int window_width = 1000;
         int window_height = 1000;
         const float checkbox_padding = 55.0;
+        bool quit_flag_ = false;
 
         // Variables
         std::vector<std::unique_ptr<PlotObject>> plotObjects;

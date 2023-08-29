@@ -53,6 +53,7 @@ Plot::~Plot()
 
 void Plot::CleanUp()
 {
+    printf("Closing plot window\n");
     #ifdef __EMSCRIPTEN__
     EMSCRIPTEN_MAINLOOP_END;
     #endif
@@ -229,7 +230,7 @@ void Plot::renderImguiWindow()
     ImGui_ImplOpenGL3_Init(glsl_version);
 
     // Our state
-    while (!glfwWindowShouldClose(window))
+    while (!glfwWindowShouldClose(window) && !quit_flag_)
     {
         // Poll and handle events (inputs, window resize, etc.)
         // You can read the io.WantCaptureMouse, io.WantCaptureKeyboard flags to tell if dear imgui wants to use your inputs.
