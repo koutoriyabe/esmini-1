@@ -9,7 +9,8 @@ Plot::Plot(std::vector<scenarioengine::Object*>& objects)
     // Populate objects we want to plot and default settings for the checkbox selections
     for (size_t i = 0; i < objects.size(); i++)
     {
-        plotObjects.emplace_back(std::make_unique<PlotObject>(objects[i]->GetMaxAcceleration(), objects[i]->GetMaxDeceleration(), objects[i]->GetMaxSpeed()));
+        // plotObjects.emplace_back(std::make_unique<PlotObject>(objects[i]->GetMaxAcceleration(), objects[i]->GetMaxDeceleration(), objects[i]->GetMaxSpeed()));
+        plotObjects.emplace_back(std::make_unique<PlotObject>(objects[i]));
         (i == 0) ? selectedItem.push_back(true) : selectedItem.push_back(false);
     }
     // Set default values for lineplot checkboxes
@@ -87,7 +88,8 @@ void Plot::renderPlot(const char* name, float window_w, float window_h)
     // Make checkboxes
     for (size_t i = 0; i < bool_array_size_; i++)
     {
-        ImGui::Checkbox(("Object " + std::to_string(i)).c_str(), reinterpret_cast<bool*>(&selectedItem[i]));
+        std::string checkbox_name = "Object " + std::to_string(i) + " (" + plotObjects[i]->getName() + ")";
+        ImGui::Checkbox(checkbox_name.c_str(), reinterpret_cast<bool*>(&selectedItem[i]));
         if (i < bool_array_size_ - 1)
         {
             ImGui::SameLine();
@@ -194,7 +196,7 @@ void Plot::renderPlot(const char* name, float window_w, float window_h)
         {
             ImPlot::BeginPlot(plot_name.c_str(), ImVec2(window_w - 200, (window_h - checkbox_padding) / lineplot_objects));
             ImPlot::SetupAxes("x", "y", x_scaling, y_scaling);
-            ImPlot::PlotLine(("Object " + std::to_string(selection)).c_str(), plotObjects[selection]->plotData.at(PlotCategories::Time).data(), d.second.data(), static_cast<int>(plotObjects[selection]->plotData.at(PlotCategories::Time).size()));
+            ImPlot::PlotLine(std::to_string(selection).c_str(), plotObjects[selection]->plotData.at(PlotCategories::Time).data(), d.second.data(), static_cast<int>(plotObjects[selection]->plotData.at(PlotCategories::Time).size()));
             ImPlot::EndPlot();
         }
     // ImPlot::SetNextMarkerStyle(ImPlotMarker_Circle);
@@ -267,11 +269,12 @@ void Plot::glfw_error_callback(int error, const char* description)
     fprintf(stderr, "GLFW Error %d: %s\n", error, description);
 }
 
-Plot::PlotObject::PlotObject(float max_acc, float max_decel, float max_speed) :
+Plot::PlotObject::PlotObject(Object* object) :
 time_max_(30.0f),
-max_acc_(max_acc),
-max_decel_(-max_decel),
-max_speed_(max_speed)
+max_acc_(object->GetMaxAcceleration()),
+max_decel_(-object->GetMaxDeceleration()),
+max_speed_(object->GetMaxSpeed()),
+name_(object->GetName())
 {}
 
 void Plot::PlotObject::updateData(Object* object, double dt)
@@ -312,4 +315,8 @@ float Plot::PlotObject::getMaxDecel()
 float Plot::PlotObject::getMaxSpeed()
 {
     return max_speed_;
+}
+std::string Plot::PlotObject::getName()
+{
+    return name_;
 }

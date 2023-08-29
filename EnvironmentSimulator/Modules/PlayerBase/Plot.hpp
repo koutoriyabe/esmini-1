@@ -53,7 +53,8 @@ class Plot {
     private:
         class PlotObject {
             public:
-                PlotObject(float max_acc, float max_decel, float max_speed);
+                // PlotObject(float max_acc, float max_decel, float max_speed);
+                PlotObject(Object* object);
 
                 void updateData(Object* object, double dt);
 
@@ -62,6 +63,7 @@ class Plot {
                 float getMaxAcc();
                 float getMaxDecel();
                 float getMaxSpeed();
+                std::string getName();
 
                 // Data
                 std::unordered_map<PlotCategories, std::vector<float>> plotData{};
@@ -72,6 +74,7 @@ class Plot {
                 const float max_acc_;
                 const float max_decel_;
                 const float max_speed_;
+                const std::string name_;
 
         };
         // GLFW, glsl
