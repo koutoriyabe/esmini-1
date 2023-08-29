@@ -66,12 +66,12 @@ static int execute_scenario(int argc, char* argv[])
 #ifdef _USE_IMPLOT
     // Initialize ImPlot
     std::unique_ptr<Plot> plot;
-    std::thread thread1;
+    std::thread plot_thread;
 
     if (player->opt.GetOptionSet("plot"))
     {
         plot = std::make_unique<Plot>(player->scenarioEngine->entities_.object_);
-        thread1 = std::thread(&Plot::renderImguiWindow, plot.get());
+        plot_thread = std::thread(&Plot::renderImguiWindow, plot.get());
     }
 #endif
 
@@ -106,7 +106,7 @@ static int execute_scenario(int argc, char* argv[])
 
 #ifdef _USE_IMPLOT
     plot->set_quit_flag();
-    thread1.join();
+    plot_thread.join();
 #endif
 
     return retval;
