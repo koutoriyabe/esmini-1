@@ -48,7 +48,7 @@ macro(set_esmini_cloud_links)
         set(GTEST_PACKAGE_URL
             https://esmini.asuscomm.com/AICLOUD766065121/libs/googletest_v10.7z)
         set(IMPLOT_PACKAGE_URL
-            https://esmini.asuscomm.com/AICLOUD766065121/libs/implot_v10.7z.7z)
+            https://esmini.asuscomm.com/AICLOUD766065121/libs/implot_v10.7z)
     elseif(MINGW)
         message("MinGW, enforcing slimmed esmini")
     else()
