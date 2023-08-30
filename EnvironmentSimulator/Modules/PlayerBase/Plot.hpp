@@ -27,7 +27,8 @@
 
 using namespace scenarioengine;
 
-enum class PlotCategories {
+enum class PlotCategories 
+{
     LatVel = 0,
     LongVel,
     LatA,
@@ -48,7 +49,7 @@ class Plot {
         void renderPlot(const char* name, float window_width, float window_height);
         void renderImguiWindow();
         static void glfw_error_callback(int error, const char* description);
-        void set_quit_flag() {quit_flag_ = true;};
+        void set_quit_flag();
 
     private:
         class PlotObject {
@@ -70,33 +71,43 @@ class Plot {
 
             private:
                 // Constants
-                const float time_max_;
-                const float max_acc_;
-                const float max_decel_;
-                const float max_speed_;
-                const std::string name_;
+                const float time_max_ = {};
+                const float max_acc_ = {};
+                const float max_decel_ = {};
+                const float max_speed_ = {};
+                const std::string name_ = {};
 
         };
         // GLFW, glsl
-        const char* glsl_version{};
-        GLFWwindow* window;
+        const char* glsl_version = nullptr;
+        GLFWwindow* window = nullptr;
         int window_width = 1000;
         int window_height = 1000;
         const float checkbox_padding = 55.0;
         bool quit_flag_ = false;
 
         // Variables
-        std::vector<std::unique_ptr<PlotObject>> plotObjects;
+        std::vector<std::unique_ptr<PlotObject>> plotObjects = {};
+        std::unordered_map<PlotCategories, std::string> getCategoryName
+        {
+            {PlotCategories::LatVel, "LatVel"},
+            {PlotCategories::LongVel, "LongVel"},
+            {PlotCategories::LatA, "LatA"},
+            {PlotCategories::LongA, "LongA"},
+            {PlotCategories::LaneOffset, "LaneOffset"},
+            {PlotCategories::LaneID, "LaneID"},
+            {PlotCategories::Time, "Time"}
+        };
 
         // Settings
         ImPlotAxisFlags x_scaling = ImPlotAxisFlags_None;
         ImPlotAxisFlags y_scaling = ImPlotAxisFlags_None;
 
         // Object selection
+        unsigned int selection = 0;
         size_t bool_array_size_ = {};
         size_t plotcategories_size_ = {};
         std::vector<char> selectedItem = {};
-        unsigned int selection = 0;
         std::vector<char> lineplot_selection = {};
 };
 
