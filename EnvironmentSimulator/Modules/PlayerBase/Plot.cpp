@@ -75,7 +75,7 @@ void Plot::updateData(std::vector<Object*>& objects, double dt)
 void Plot::renderPlot(const char* name, float window_w, float window_h)
 {
     std::string plot_name        = "";
-    size_t         lineplot_objects = plotObjects[0]->plotData.size() - 1;  // Time has no own plot
+    size_t      lineplot_objects = plotObjects[0]->plotData.size() - 1;  // Time has no own plot
     ImGui::SetNextWindowSize(ImVec2(window_w, window_h), ImGuiCond_Once);
     ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiCond_Once);
     ImGui::Begin(name, nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoTitleBar);
@@ -214,7 +214,9 @@ void Plot::renderImguiWindow()
     // Create window with graphics context
     window = glfwCreateWindow(window_width, window_height, "Lineplot", nullptr, nullptr);
     if (window == nullptr)
+    {
         std::cerr << "Something is wrong in IMGUI, cant create window!" << std::endl;
+    }
     glfwMakeContextCurrent(window);
     glfwSwapInterval(1);  // Enable vsync
     // Setup Dear ImGui context
