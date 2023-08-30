@@ -75,7 +75,7 @@ void Plot::updateData(std::vector<Object*>& objects, double dt)
 void Plot::renderPlot(const char* name, float window_w, float window_h)
 {
     std::string plot_name        = "";
-    int         lineplot_objects = plotObjects[0]->plotData.size() - 1;  // Time has no own plot
+    size_t         lineplot_objects = plotObjects[0]->plotData.size() - 1;  // Time has no own plot
     ImGui::SetNextWindowSize(ImVec2(window_w, window_h), ImGuiCond_Once);
     ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiCond_Once);
     ImGui::Begin(name, nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoTitleBar);
@@ -115,7 +115,7 @@ void Plot::renderPlot(const char* name, float window_w, float window_h)
     {
         if (selectedItem[i] && i != selection)
         {
-            selection = i;
+            selection = static_cast<unsigned int>(i);
             break;
         }
     }
@@ -195,7 +195,7 @@ void Plot::renderPlot(const char* name, float window_w, float window_h)
         }
         else if (lineplot_selection[d.first])
         {
-            ImPlot::BeginPlot(plot_name.c_str(), ImVec2(window_w - 200, (window_h - checkbox_padding) / lineplot_objects));
+            ImPlot::BeginPlot(plot_name.c_str(), ImVec2(window_w - 200, (window_h - checkbox_padding) / static_cast<float>(lineplot_objects)));
             ImPlot::SetupAxes("x", "y", x_scaling, y_scaling);
             ImPlot::PlotLine(std::to_string(selection).c_str(),
                              plotObjects[selection]->plotData.at(PlotCategories::Time).data(),
@@ -283,9 +283,9 @@ void Plot::set_quit_flag()
 // PlotObject
 Plot::PlotObject::PlotObject(Object* object)
     : time_max_(30.0f),
-      max_acc_(object->GetMaxAcceleration()),
-      max_decel_(-object->GetMaxDeceleration()),
-      max_speed_(object->GetMaxSpeed()),
+      max_acc_(static_cast<float>(object->GetMaxAcceleration())),
+      max_decel_(static_cast<float>(-object->GetMaxDeceleration())),
+      max_speed_(static_cast<float>(object->GetMaxSpeed())),
       name_(object->GetName())
 {
 }

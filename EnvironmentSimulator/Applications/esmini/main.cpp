@@ -104,8 +104,11 @@ static int execute_scenario(int argc, char* argv[])
     }
 
 #ifdef _USE_IMPLOT
-    plot->set_quit_flag();
-    plot_thread.join();
+    if (plot != nullptr)
+    {
+        plot->set_quit_flag();
+        plot_thread.join();
+    }
 #endif
 
     return retval;
