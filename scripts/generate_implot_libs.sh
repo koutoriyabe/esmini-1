@@ -141,12 +141,18 @@ if [ "$OSTYPE" == "msys" ]; then
 
 elif  [[ "$OSTYPE" == "darwin"* ]] || [[ "$OSTYPE" == "linux-gnu"* ]]; then
 
-    cmake -G "${GENERATOR[@]}" ${GENERATOR_ARGUMENTS} -DCMAKE_BUILD_TYPE=Debug .. -DCMAKE_C_FLAGS="-fPIC"
+	if [[ "$OSTYPE" == "darwin"* ]]; then
+		MY_CXX_FLAGS="-std=c++11"
+	elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
+		MY_CXX_FLAGS=""
+	fi
+
+    cmake -G "${GENERATOR[@]}" ${GENERATOR_ARGUMENTS} -DCMAKE_BUILD_TYPE=Debug .. -DCMAKE_C_FLAGS="-fPIC"  -DCMAKE_CXX_FLAGS=${MY_CXX_FLAGS}
     cmake --build . $PARALLEL_ARG
     mv libimplot.a libimplotd.a
 
     rm CMakeCache.txt
-    cmake -G "${GENERATOR[@]}" ${GENERATOR_ARGUMENTS} -DCMAKE_BUILD_TYPE=Release .. -DCMAKE_C_FLAGS="-fPIC"
+    cmake -G "${GENERATOR[@]}" ${GENERATOR_ARGUMENTS} -DCMAKE_BUILD_TYPE=Release .. -DCMAKE_C_FLAGS="-fPIC"  -DCMAKE_CXX_FLAGS=${MY_CXX_FLAGS}
     cmake --build . $PARALLEL_ARG
 
 fi
