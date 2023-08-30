@@ -5,7 +5,7 @@ Plot::Plot(std::vector<scenarioengine::Object*>& objects)
 {
     // Save some sizes for easier access later
     plotcategories_size_ = static_cast<size_t>(PlotCategories::Time);
-    bool_array_size_ = objects.size();
+    bool_array_size_     = objects.size();
 
     // Populate objects we want to plot and default settings for the checkbox selections
     for (size_t i = 0; i < objects.size(); i++)
@@ -15,31 +15,31 @@ Plot::Plot(std::vector<scenarioengine::Object*>& objects)
     }
 
     glfwSetErrorCallback(glfw_error_callback);
-        if (!glfwInit())
-            std::cerr << "Something is wrong in IMGUI, cant init!" << std::endl;
+    if (!glfwInit())
+        std::cerr << "Something is wrong in IMGUI, cant init!" << std::endl;
 
         // Decide GL+GLSL versions
-    #if defined(IMGUI_IMPL_OPENGL_ES2)
-        // GL ES 2.0 + GLSL 100
-        const char* glsl_version = "#version 100";
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 2);
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
-        glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_ES_API);
-    #elif defined(__APPLE__)
-        // GL 3.2 + GLSL 150
-        const char* glsl_version = "#version 150";
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
-        glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);  // 3.2+ only
-        glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);            // Required on Mac
-    #else
-        // GL 3.0 + GLSL 130
-        glsl_version = "#version 330";
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-        glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);  // 3.2+ only
-        // glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);            // 3.0+ only
-    #endif
+#if defined(IMGUI_IMPL_OPENGL_ES2)
+    // GL ES 2.0 + GLSL 100
+    const char* glsl_version = "#version 100";
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 2);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
+    glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_ES_API);
+#elif defined(__APPLE__)
+    // GL 3.2 + GLSL 150
+    const char* glsl_version = "#version 150";
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);  // 3.2+ only
+    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);            // Required on Mac
+#else
+    // GL 3.0 + GLSL 130
+    glsl_version = "#version 330";
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);  // 3.2+ only
+                                                                    // glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);            // 3.0+ only
+#endif
 }
 
 Plot::~Plot()
@@ -50,9 +50,9 @@ Plot::~Plot()
 void Plot::CleanUp()
 {
     printf("Closing plot window\n");
-    #ifdef __EMSCRIPTEN__
+#ifdef __EMSCRIPTEN__
     EMSCRIPTEN_MAINLOOP_END;
-    #endif
+#endif
 
     // Cleanup
     ImGui_ImplOpenGL3_Shutdown();
@@ -74,8 +74,8 @@ void Plot::updateData(std::vector<Object*>& objects, double dt)
 
 void Plot::renderPlot(const char* name, float window_w, float window_h)
 {
-    std::string plot_name = "";
-    int lineplot_objects = plotObjects[0]->plotData.size() - 1; // Time has no own plot
+    std::string plot_name        = "";
+    int         lineplot_objects = plotObjects[0]->plotData.size() - 1;  // Time has no own plot
     ImGui::SetNextWindowSize(ImVec2(window_w, window_h), ImGuiCond_Once);
     ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiCond_Once);
     ImGui::Begin(name, nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoTitleBar);
@@ -108,7 +108,7 @@ void Plot::renderPlot(const char* name, float window_w, float window_h)
             }
         }
     }
-    ImGui::SetCursorPos(store_pos); // Set the cursor back to where we start drawing the lineplots
+    ImGui::SetCursorPos(store_pos);  // Set the cursor back to where we start drawing the lineplots
 
     // Check which ones is currently selected and recently updated
     for (size_t i = 0; i < bool_array_size_; i++)
@@ -132,9 +132,9 @@ void Plot::renderPlot(const char* name, float window_w, float window_h)
     for (const auto& d : plotObjects[selection]->plotData)
     {
         // Adjust axes
-        switch(d.first)
+        switch (d.first)
         {
-            case(PlotCategories::Time):
+            case (PlotCategories::Time):
             {
                 plot_name = getCategoryName[PlotCategories::Time];
                 if (!d.second.empty() && d.second.back() > plotObjects[selection]->getTimeMax())
@@ -143,45 +143,50 @@ void Plot::renderPlot(const char* name, float window_w, float window_h)
                 }
                 break;
             }
-            case(PlotCategories::LatVel):
+            case (PlotCategories::LatVel):
             {
                 plot_name = getCategoryName[PlotCategories::LatVel];
                 ImPlot::SetNextAxesLimits(-5.0f, plotObjects[selection]->getTimeMax(), -1.0f, 1.0f);
                 break;
             }
-            case(PlotCategories::LongVel):
+            case (PlotCategories::LongVel):
             {
                 plot_name = getCategoryName[PlotCategories::LongVel];
                 ImPlot::SetNextAxesLimits(-5.0f, plotObjects[selection]->getTimeMax(), -1.0, plotObjects[selection]->getMaxSpeed() + 5.0f);
                 break;
             }
-            case(PlotCategories::LatA):
+            case (PlotCategories::LatA):
             {
                 plot_name = getCategoryName[PlotCategories::LatA];
-                ImPlot::SetNextAxesLimits(-5.0f, plotObjects[selection]->getTimeMax(), plotObjects[selection]->getMaxDecel(), plotObjects[selection]->getMaxAcc());
+                ImPlot::SetNextAxesLimits(-5.0f,
+                                          plotObjects[selection]->getTimeMax(),
+                                          plotObjects[selection]->getMaxDecel(),
+                                          plotObjects[selection]->getMaxAcc());
                 break;
             }
-            case(PlotCategories::LongA):
+            case (PlotCategories::LongA):
             {
                 plot_name = getCategoryName[PlotCategories::LongA];
-                ImPlot::SetNextAxesLimits(-5.0f, plotObjects[selection]->getTimeMax(), plotObjects[selection]->getMaxDecel(), plotObjects[selection]->getMaxAcc());
+                ImPlot::SetNextAxesLimits(-5.0f,
+                                          plotObjects[selection]->getTimeMax(),
+                                          plotObjects[selection]->getMaxDecel(),
+                                          plotObjects[selection]->getMaxAcc());
                 break;
             }
-            case(PlotCategories::LaneOffset):
+            case (PlotCategories::LaneOffset):
             {
                 plot_name = getCategoryName[PlotCategories::LaneOffset];
                 ImPlot::SetNextAxesLimits(-5.0f, plotObjects[selection]->getTimeMax(), -2.5, 2.5);
                 break;
             }
-            case(PlotCategories::LaneID):
+            case (PlotCategories::LaneID):
             {
-                plot_name = getCategoryName[PlotCategories::LaneID];
+                plot_name      = getCategoryName[PlotCategories::LaneID];
                 float y_values = abs(d.second.back());
                 ImPlot::SetNextAxesLimits(-5.0f, plotObjects[selection]->getTimeMax(), -y_values - 1, y_values + 1);
                 break;
             }
         }
-
 
         // Plot (but not time over time or X over X)
         if (d.first == PlotCategories::Time)
@@ -192,10 +197,13 @@ void Plot::renderPlot(const char* name, float window_w, float window_h)
         {
             ImPlot::BeginPlot(plot_name.c_str(), ImVec2(window_w - 200, (window_h - checkbox_padding) / lineplot_objects));
             ImPlot::SetupAxes("x", "y", x_scaling, y_scaling);
-            ImPlot::PlotLine(std::to_string(selection).c_str(), plotObjects[selection]->plotData.at(PlotCategories::Time).data(), d.second.data(), static_cast<int>(plotObjects[selection]->plotData.at(PlotCategories::Time).size()));
+            ImPlot::PlotLine(std::to_string(selection).c_str(),
+                             plotObjects[selection]->plotData.at(PlotCategories::Time).data(),
+                             d.second.data(),
+                             static_cast<int>(plotObjects[selection]->plotData.at(PlotCategories::Time).size()));
             ImPlot::EndPlot();
         }
-    // ImPlot::SetNextMarkerStyle(ImPlotMarker_Circle);
+        // ImPlot::SetNextMarkerStyle(ImPlotMarker_Circle);
     }
     // ImGui::EndChild();
     ImGui::End();
@@ -208,19 +216,19 @@ void Plot::renderImguiWindow()
     if (window == nullptr)
         std::cerr << "Something is wrong in IMGUI, cant create window!" << std::endl;
     glfwMakeContextCurrent(window);
-    glfwSwapInterval(1); // Enable vsync
+    glfwSwapInterval(1);  // Enable vsync
     // Setup Dear ImGui context
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
     ImPlot::CreateContext();
     ImGuiIO& io = ImGui::GetIO();
     static_cast<void>(io);
-    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
-    io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;  // Enable Keyboard Controls
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;   // Enable Gamepad Controls
 
     // Setup Dear ImGui style
     ImGui::StyleColorsDark();
-    //ImGui::StyleColorsLight();
+    // ImGui::StyleColorsLight();
     ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
     // Setup Platform/Renderer backends
@@ -232,9 +240,10 @@ void Plot::renderImguiWindow()
     {
         // Poll and handle events (inputs, window resize, etc.)
         // You can read the io.WantCaptureMouse, io.WantCaptureKeyboard flags to tell if dear imgui wants to use your inputs.
-        // - When io.WantCaptureMouse is true, do not dispatch mouse input data to your main application, or clear/overwrite your copy of the mouse data.
-        // - When io.WantCaptureKeyboard is true, do not dispatch keyboard input data to your main application, or clear/overwrite your copy of the keyboard data.
-        // Generally you may always pass all inputs to dear imgui, and hide them from your application based on those two flags.
+        // - When io.WantCaptureMouse is true, do not dispatch mouse input data to your main application, or clear/overwrite your copy of the mouse
+        // data.
+        // - When io.WantCaptureKeyboard is true, do not dispatch keyboard input data to your main application, or clear/overwrite your copy of the
+        // keyboard data. Generally you may always pass all inputs to dear imgui, and hide them from your application based on those two flags.
         glfwPollEvents();
 
         // Start the Dear ImGui frame
@@ -265,25 +274,28 @@ void Plot::glfw_error_callback(int error, const char* description)
     fprintf(stderr, "GLFW Error %d: %s\n", error, description);
 }
 
-void Plot::set_quit_flag() 
+void Plot::set_quit_flag()
 {
     quit_flag_ = true;
 }
-//Plot
+// Plot
 
-//PlotObject
-Plot::PlotObject::PlotObject(Object* object) :
-    time_max_(30.0f),
-    max_acc_(object->GetMaxAcceleration()),
-    max_decel_(-object->GetMaxDeceleration()),
-    max_speed_(object->GetMaxSpeed()),
-    name_(object->GetName())
-{}
+// PlotObject
+Plot::PlotObject::PlotObject(Object* object)
+    : time_max_(30.0f),
+      max_acc_(object->GetMaxAcceleration()),
+      max_decel_(-object->GetMaxDeceleration()),
+      max_speed_(object->GetMaxSpeed()),
+      name_(object->GetName())
+{
+}
 
 void Plot::PlotObject::updateData(Object* object, double dt)
 {
     // Update Time
-    (plotData[PlotCategories::Time].empty()) ? plotData[PlotCategories::Time].push_back(static_cast<float>(dt)) : plotData[PlotCategories::Time].push_back(plotData[PlotCategories::Time].back() + static_cast<float>(dt));
+    (plotData[PlotCategories::Time].empty())
+        ? plotData[PlotCategories::Time].push_back(static_cast<float>(dt))
+        : plotData[PlotCategories::Time].push_back(plotData[PlotCategories::Time].back() + static_cast<float>(dt));
 
     // Update Velocity Lat./Long
     double lat_vel, long_vel;
@@ -314,7 +326,7 @@ float Plot::PlotObject::getMaxAcc()
 }
 float Plot::PlotObject::getMaxDecel()
 {
-   return max_decel_;
+    return max_decel_;
 }
 float Plot::PlotObject::getMaxSpeed()
 {
