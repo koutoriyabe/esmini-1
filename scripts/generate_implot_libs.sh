@@ -139,20 +139,19 @@ if [ "$OSTYPE" == "msys" ]; then
 	cmake --build . -j $PARALLEL_ARG --config Release
 	cmake --build . -j $PARALLEL_ARG --config Debug
 
-elif  [[ "$OSTYPE" == "darwin"* ]] || [[ "$OSTYPE" == "linux-gnu"* ]]; then
+elif  [[ "$OSTYPE" == "darwin"* ]] ; then
 
-	if [[ "$OSTYPE" == "darwin"* ]]; then
-		MY_CXX_FLAGS="-std=c++11"
-	elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
-		MY_CXX_FLAGS=""
-	fi
+    cmake -G "${GENERATOR[@]}" ${GENERATOR_ARGUMENTS} -DCMAKE_BUILD_TYPE=Release .. -DCMAKE_C_FLAGS="-fPIC"  -DCMAKE_CXX_FLAGS="-std=c++11" -DCMAKE_OSX_ARCHITECTURES="$macos_arch"
+    cmake --build . $PARALLEL_ARG
 
-    cmake -G "${GENERATOR[@]}" ${GENERATOR_ARGUMENTS} -DCMAKE_BUILD_TYPE=Debug .. -DCMAKE_C_FLAGS="-fPIC"  -DCMAKE_CXX_FLAGS=${MY_CXX_FLAGS}
+elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
+
+    cmake -G "${GENERATOR[@]}" ${GENERATOR_ARGUMENTS} -DCMAKE_BUILD_TYPE=Debug .. -DCMAKE_C_FLAGS="-fPIC"
     cmake --build . $PARALLEL_ARG
     mv libimplot.a libimplotd.a
 
     rm CMakeCache.txt
-    cmake -G "${GENERATOR[@]}" ${GENERATOR_ARGUMENTS} -DCMAKE_BUILD_TYPE=Release .. -DCMAKE_C_FLAGS="-fPIC"  -DCMAKE_CXX_FLAGS=${MY_CXX_FLAGS}
+    cmake -G "${GENERATOR[@]}" ${GENERATOR_ARGUMENTS} -DCMAKE_BUILD_TYPE=Release .. -DCMAKE_C_FLAGS="-fPIC"
     cmake --build . $PARALLEL_ARG
 
 fi
@@ -196,7 +195,12 @@ then
 		cp build/Release/implot.lib $target_dir/lib
 		cp build/Debug/implot.lib $target_dir/lib/implotd.lib
 
-	elif  [[ "$OSTYPE" == "darwin"* ]] || [[ "$OSTYPE" == "linux-gnu"* ]]; then
+	elif  [[ "$OSTYPE" == "darwin"* ]]; then
+
+		cp glfw/build/src/libglfw3.a $target_dir/lib
+		cp build/libimplot.a $target_dir/lib
+
+    elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
 
 		cp glfw/build/src/libglfw3.a $target_dir/lib
 		cp glfw/build/src/libglfw3d.a $target_dir/lib
