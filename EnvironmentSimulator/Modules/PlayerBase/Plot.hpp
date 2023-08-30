@@ -83,9 +83,14 @@ class Plot {
         const float checkbox_padding = 55.0;
         bool quit_flag_ = false;
 
+
+        // Settings
+        ImPlotAxisFlags x_scaling = ImPlotAxisFlags_None;
+        ImPlotAxisFlags y_scaling = ImPlotAxisFlags_None;
+
         // Variables
         std::vector<std::unique_ptr<PlotObject>> plotObjects = {};
-        std::unordered_map<PlotCategories, std::string> getCategoryName
+        std::unordered_map<PlotCategories, std::string> getCategoryName =
         {
             {PlotCategories::LatVel, "LatVel"},
             {PlotCategories::LongVel, "LongVel"},
@@ -95,17 +100,20 @@ class Plot {
             {PlotCategories::LaneID, "LaneID"},
             {PlotCategories::Time, "Time"}
         };
-
-        // Settings
-        ImPlotAxisFlags x_scaling = ImPlotAxisFlags_None;
-        ImPlotAxisFlags y_scaling = ImPlotAxisFlags_None;
-
-        // Object selection
+        std::unordered_map<PlotCategories, bool> lineplot_selection = 
+        {
+            {PlotCategories::LatVel, true},
+            {PlotCategories::LongVel, true},
+            {PlotCategories::LatA, true},
+            {PlotCategories::LongA, true},
+            {PlotCategories::LaneOffset, true},
+            {PlotCategories::LaneID, true},
+            {PlotCategories::Time, true}
+        };
         unsigned int selection = 0;
         size_t bool_array_size_ = {};
         size_t plotcategories_size_ = {};
         std::vector<char> selectedItem = {};
-        std::vector<char> lineplot_selection = {};
 };
 
 #endif // PLOT_H

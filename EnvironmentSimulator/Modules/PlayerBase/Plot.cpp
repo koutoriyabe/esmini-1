@@ -13,11 +13,6 @@ Plot::Plot(std::vector<scenarioengine::Object*>& objects)
         plotObjects.emplace_back(std::make_unique<PlotObject>(objects[i]));
         (i == 0) ? selectedItem.push_back(true) : selectedItem.push_back(false);
     }
-    // Set default values for lineplot checkboxes
-    for (size_t i = 0; i < plotcategories_size_; i++)
-    {
-        lineplot_selection.push_back(true);
-    }
 
     glfwSetErrorCallback(glfw_error_callback);
         if (!glfwInit())
@@ -100,16 +95,16 @@ void Plot::renderPlot(const char* name, float window_w, float window_h)
     // Wrap in scope to avoid variable conflict names later
     {
         float y_pos = 10;
-        int i = 0;
+        // int i = 0;
         for (const auto& n : getCategoryName)
         {
             if (n.second != "Time")
             {
                 ImGui::SetCursorPos(ImVec2(820, y_pos));
-                ImGui::Checkbox(n.second.c_str(), reinterpret_cast<bool*>(&lineplot_selection[i]));
+                ImGui::Checkbox(n.second.c_str(), &lineplot_selection[n.first]);
                 auto box_size = ImGui::CalcTextSize("Signal 0");
                 y_pos += box_size[1] + 10;
-                i++;
+                // i++;
             }
         }
     }
@@ -195,7 +190,7 @@ void Plot::renderPlot(const char* name, float window_w, float window_h)
         {
             continue;
         }
-        else
+        else if (lineplot_selection[d.first])
         {
             ImPlot::BeginPlot(plot_name.c_str(), ImVec2(window_w - 200, (window_h - checkbox_padding) / lineplot_objects));
             ImPlot::SetupAxes("x", "y", x_scaling, y_scaling);
