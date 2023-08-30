@@ -170,14 +170,12 @@ void Plot::renderPlot(const char* name, float window_w, float window_h)
             case(PlotCategories::LaneOffset):
             {
                 plot_name = getCategoryName[PlotCategories::LaneOffset];
-                // lineplot_selection = false;
                 ImPlot::SetNextAxesLimits(-5.0f, plotObjects[selection]->getTimeMax(), -2.5, 2.5);
                 break;
             }
             case(PlotCategories::LaneID):
             {
                 plot_name = getCategoryName[PlotCategories::LaneID];
-                // lineplot_selection = false;
                 float y_values = abs(d.second.back());
                 ImPlot::SetNextAxesLimits(-5.0f, plotObjects[selection]->getTimeMax(), -y_values - 1, y_values + 1);
                 break;
