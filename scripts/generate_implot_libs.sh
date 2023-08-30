@@ -115,7 +115,12 @@ if [ "$OSTYPE" == "msys" ]; then
     cmake --build . $PARALLEL_ARG --config Release
     cmake --build . $PARALLEL_ARG --config Debug
 
-elif  [[ "$OSTYPE" == "darwin"* ]] || [[ "$OSTYPE" == "linux-gnu"* ]]; then
+elif  [[ "$OSTYPE" == "darwin"* ]] ; then
+
+    cmake -G "${GENERATOR[@]}" ${GENERATOR_ARGUMENTS} -DCMAKE_BUILD_TYPE=Debug .. -DCMAKE_C_FLAGS="-fPIC" -DCMAKE_CXX_FLAGS="-std=c++11" -DCMAKE_OSX_ARCHITECTURES="$macos_arch"
+    cmake --build . $PARALLEL_ARG
+
+elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
 
     cmake -G "${GENERATOR[@]}" ${GENERATOR_ARGUMENTS} -DCMAKE_BUILD_TYPE=Debug .. -DCMAKE_C_FLAGS="-fPIC"
     cmake --build . $PARALLEL_ARG
@@ -126,7 +131,6 @@ elif  [[ "$OSTYPE" == "darwin"* ]] || [[ "$OSTYPE" == "linux-gnu"* ]]; then
     cmake --build . $PARALLEL_ARG
 
 fi
-
 
 echo ------------------------ compile implot ------------------------------
 
@@ -141,7 +145,7 @@ if [ "$OSTYPE" == "msys" ]; then
 
 elif  [[ "$OSTYPE" == "darwin"* ]] ; then
 
-    cmake -G "${GENERATOR[@]}" ${GENERATOR_ARGUMENTS} -DCMAKE_BUILD_TYPE=Release .. -DCMAKE_C_FLAGS="-fPIC"  -DCMAKE_CXX_FLAGS="-std=c++11" -DCMAKE_OSX_ARCHITECTURES="$macos_arch"
+    cmake -G "${GENERATOR[@]}" ${GENERATOR_ARGUMENTS} -DCMAKE_BUILD_TYPE=Release .. -DCMAKE_C_FLAGS="-fPIC" -DCMAKE_CXX_FLAGS="-std=c++11" -DCMAKE_OSX_ARCHITECTURES="$macos_arch"
     cmake --build . $PARALLEL_ARG
 
 elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
