@@ -6,8 +6,11 @@ macro(set_implot_libs)
 
     if(APPLE)
         set(IMPLOT_LIBRARIES
-			${EXTERNALS_IMPLOT_LIBRARY_PATH}/libglfw3.a
-			${EXTERNALS_IMPLOT_LIBRARY_PATH}/libimplot.a)
+            ${EXTERNALS_IMPLOT_LIBRARY_PATH}/libglfw3.a
+            ${EXTERNALS_IMPLOT_LIBRARY_PATH}/libimplot.a
+            "-framework OpenGL"
+            "-framework Cocoa"
+            "-framework IOKit")
     elseif(LINUX)
         set(IMPLOT_LIBRARIES
             optimized
