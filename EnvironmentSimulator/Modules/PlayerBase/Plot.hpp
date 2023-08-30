@@ -5,9 +5,6 @@
 #include "Entities.hpp"
 #include <stdio.h>
 #include <vector>
-#include <random>
-#include <thread>
-#include <tuple>
 #include <unordered_map>
 #define GL_SILENCE_DEPRECATION
 #if defined(IMGUI_IMPL_OPENGL_ES2)
