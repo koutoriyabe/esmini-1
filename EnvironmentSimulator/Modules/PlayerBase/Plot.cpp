@@ -74,8 +74,18 @@ void Plot::updateData(std::vector<Object*>& objects, double dt)
 
 void Plot::renderPlot(const char* name, float window_w, float window_h)
 {
-    std::string plot_name        = "";
-    size_t      lineplot_objects = plotObjects[0]->plotData.size() - 1;  // Time has no own plot
+    std::string plot_name = "";
+    std::string unit      = "";
+
+    // See how many boxes that has been checked (excl. time), used to scale lineplots
+    size_t lineplot_objects = 0;
+    for (const auto& sel : lineplot_selection)
+    {
+        if (sel.first != PlotCategories::Time && sel.second)
+        {
+            lineplot_objects += 1;
+        }
+    }
     ImGui::SetNextWindowSize(ImVec2(window_w, window_h), ImGuiCond_Once);
     ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiCond_Once);
     ImGui::Begin(name, nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoTitleBar);
@@ -146,18 +156,21 @@ void Plot::renderPlot(const char* name, float window_w, float window_h)
             case (PlotCategories::LatVel):
             {
                 plot_name = getCategoryName[PlotCategories::LatVel];
+                unit      = "m/s";
                 ImPlot::SetNextAxesLimits(-5.0f, plotObjects[selection]->getTimeMax(), -1.0f, 1.0f);
                 break;
             }
             case (PlotCategories::LongVel):
             {
                 plot_name = getCategoryName[PlotCategories::LongVel];
+                unit      = "m/s";
                 ImPlot::SetNextAxesLimits(-5.0f, plotObjects[selection]->getTimeMax(), -1.0, plotObjects[selection]->getMaxSpeed() + 5.0f);
                 break;
             }
             case (PlotCategories::LatA):
             {
                 plot_name = getCategoryName[PlotCategories::LatA];
+                unit      = "m/s²";
                 ImPlot::SetNextAxesLimits(-5.0f,
                                           plotObjects[selection]->getTimeMax(),
                                           plotObjects[selection]->getMaxDecel(),
@@ -167,6 +180,7 @@ void Plot::renderPlot(const char* name, float window_w, float window_h)
             case (PlotCategories::LongA):
             {
                 plot_name = getCategoryName[PlotCategories::LongA];
+                unit      = "m/s²";
                 ImPlot::SetNextAxesLimits(-5.0f,
                                           plotObjects[selection]->getTimeMax(),
                                           plotObjects[selection]->getMaxDecel(),
@@ -176,12 +190,14 @@ void Plot::renderPlot(const char* name, float window_w, float window_h)
             case (PlotCategories::LaneOffset):
             {
                 plot_name = getCategoryName[PlotCategories::LaneOffset];
+                unit      = "m";
                 ImPlot::SetNextAxesLimits(-5.0f, plotObjects[selection]->getTimeMax(), -2.5, 2.5);
                 break;
             }
             case (PlotCategories::LaneID):
             {
                 plot_name      = getCategoryName[PlotCategories::LaneID];
+                unit           = "id";
                 float y_values = abs(d.second.back());
                 ImPlot::SetNextAxesLimits(-5.0f, plotObjects[selection]->getTimeMax(), -y_values - 1, y_values + 1);
                 break;
@@ -195,17 +211,19 @@ void Plot::renderPlot(const char* name, float window_w, float window_h)
         }
         else if (lineplot_selection[d.first])
         {
-            ImPlot::BeginPlot(plot_name.c_str(), ImVec2(window_w - 200, (window_h - checkbox_padding) / static_cast<float>(lineplot_objects)));
-            ImPlot::SetupAxes("x", "y", x_scaling, y_scaling);
-            ImPlot::PlotLine(std::to_string(selection).c_str(),
-                             plotObjects[selection]->plotData.at(PlotCategories::Time).data(),
-                             d.second.data(),
-                             static_cast<int>(plotObjects[selection]->plotData.at(PlotCategories::Time).size()));
-            ImPlot::EndPlot();
+            if (ImPlot::BeginPlot(plot_name.c_str(),
+                                  ImVec2(window_w - 200, (window_h - checkbox_padding) / static_cast<float>(lineplot_objects)),
+                                  ImPlotFlags_NoLegend))
+            {
+                ImPlot::SetupAxes("Time [s]", unit.c_str(), x_scaling, y_scaling);
+                ImPlot::PlotLine(std::to_string(selection).c_str(),
+                                 plotObjects[selection]->plotData.at(PlotCategories::Time).data(),
+                                 d.second.data(),
+                                 static_cast<int>(plotObjects[selection]->plotData.at(PlotCategories::Time).size()));
+                ImPlot::EndPlot();
+            }
         }
-        // ImPlot::SetNextMarkerStyle(ImPlotMarker_Circle);
     }
-    // ImGui::EndChild();
     ImGui::End();
 }
 
