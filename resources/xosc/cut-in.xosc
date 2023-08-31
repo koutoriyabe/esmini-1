@@ -152,6 +152,8 @@
                                  <SpeedActionDynamics dynamicsShape="linear" value="-4" dynamicsDimension="rate"/>
                                  <SpeedActionTarget>
                                     <AbsoluteTargetSpeed value="0"/>
+                                    <!-- <RelativeTargetSpeed entityRef="Ego" value="1" speedTargetValueType="factor"/> -->
+                                    <!-- overtakeも同様に減速を開始するコード      -->
                                  </SpeedActionTarget>
                               </SpeedAction>
                            </LongitudinalAction>
