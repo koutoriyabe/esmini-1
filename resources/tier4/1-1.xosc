@@ -11,7 +11,7 @@
    <ParameterDeclarations>
       <ParameterDeclaration name="HostVehicle" parameterType="string" value="car_white"/>
       <ParameterDeclaration name="HostSpeed" parameterType="double" value="10"/>
-      <ParameterDeclaration name="PedestrianSpeed" parameterType="double" value="50"/><!--歩行者の速度　初期は1.5-->
+      <ParameterDeclaration name="PedestrianSpeed" parameterType="double" value="10"/><!--歩行者の速度　初期は1.5-->
 
       <ParameterDeclaration name="P_Sx" parameterType="double" value="0"/><!-- 歩行者のxの初期位置　初期は15 -->
       <ParameterDeclaration name="Dy" parameterType="double" value="10"/><!-- 歩行者のDy　初期は0.5 -->
