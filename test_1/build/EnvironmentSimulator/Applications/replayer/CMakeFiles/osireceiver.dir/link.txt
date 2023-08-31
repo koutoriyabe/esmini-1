@@ -1,0 +1,1 @@
+/usr/bin/c++ -std=c++17 -pthread -fPIC -Wl,-strip-all -rdynamic CMakeFiles/osireceiver.dir/osi_receiver.cpp.o -o osireceiver  ../../../../externals/osi/linux/lib/libopen_simulation_interface_pic.a ../../../../externals/osi/linux/lib/libprotobuf.a 

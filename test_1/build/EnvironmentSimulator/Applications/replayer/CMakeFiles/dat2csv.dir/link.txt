@@ -1,0 +1,1 @@
+/usr/bin/c++ -std=c++17 -pthread -fPIC -Wl,-strip-all -rdynamic CMakeFiles/dat2csv.dir/dat2csv.cpp.o CMakeFiles/dat2csv.dir/Replay.cpp.o -o dat2csv  ../../Modules/RoadManager/libRoadManager.a ../../Modules/CommonMini/libCommonMini.a ../../../../externals/osi/linux/lib/libopen_simulation_interface_pic.a ../../../../externals/osi/linux/lib/libprotobuf.a 

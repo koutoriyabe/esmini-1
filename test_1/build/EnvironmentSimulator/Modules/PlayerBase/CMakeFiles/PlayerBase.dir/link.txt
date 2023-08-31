@@ -1,0 +1,2 @@
+/usr/bin/ar qc libPlayerBase.a CMakeFiles/PlayerBase.dir/playerbase.cpp.o
+/usr/bin/ranlib libPlayerBase.a

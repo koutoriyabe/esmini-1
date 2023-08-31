@@ -1,0 +1,2 @@
+/usr/bin/ar qc libViewerBase.a CMakeFiles/ViewerBase.dir/viewer.cpp.o CMakeFiles/ViewerBase.dir/roadgeom.cpp.o CMakeFiles/ViewerBase.dir/RubberbandManipulator.cpp.o
+/usr/bin/ranlib libViewerBase.a

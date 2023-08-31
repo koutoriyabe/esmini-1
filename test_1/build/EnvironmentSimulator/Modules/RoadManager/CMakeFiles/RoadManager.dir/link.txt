@@ -1,0 +1,2 @@
+/usr/bin/ar qc libRoadManager.a CMakeFiles/RoadManager.dir/RoadManager.cpp.o CMakeFiles/RoadManager.dir/odrSpiral.cpp.o CMakeFiles/RoadManager.dir/LaneIndependentRouter.cpp.o CMakeFiles/RoadManager.dir/__/__/__/externals/pugixml/pugixml.cpp.o
+/usr/bin/ranlib libRoadManager.a

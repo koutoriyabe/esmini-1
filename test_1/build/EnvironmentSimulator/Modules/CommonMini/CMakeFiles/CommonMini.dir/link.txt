@@ -1,0 +1,2 @@
+/usr/bin/ar qc libCommonMini.a CMakeFiles/CommonMini.dir/CommonMini.cpp.o CMakeFiles/CommonMini.dir/UDP.cpp.o CMakeFiles/CommonMini.dir/version.cpp.o
+/usr/bin/ranlib libCommonMini.a

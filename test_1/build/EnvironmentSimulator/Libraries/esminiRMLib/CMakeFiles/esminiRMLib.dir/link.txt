@@ -1,0 +1,1 @@
+/usr/bin/c++ -fPIC -std=c++17 -pthread -fPIC -Wl,-strip-all -shared -Wl,-soname,libesminiRMLib.so -o libesminiRMLib.so CMakeFiles/esminiRMLib.dir/esminiRMLib.cpp.o  ../../Modules/RoadManager/libRoadManager.a ../../Modules/CommonMini/libCommonMini.a 

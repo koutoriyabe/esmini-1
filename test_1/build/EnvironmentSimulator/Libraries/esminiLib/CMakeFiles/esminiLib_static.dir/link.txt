@@ -1,0 +1,2 @@
+/usr/bin/ar qc libesminiLib_static.a CMakeFiles/esminiLib_static.dir/esminiLib.cpp.o CMakeFiles/esminiLib_static.dir/__/__/Modules/Controllers/vehicle.cpp.o
+/usr/bin/ranlib libesminiLib_static.a
