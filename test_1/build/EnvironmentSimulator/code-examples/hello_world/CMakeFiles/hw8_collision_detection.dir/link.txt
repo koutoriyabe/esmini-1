@@ -1,1 +1,0 @@
-/usr/bin/c++ -std=c++17 -pthread -fPIC -Wl,-strip-all -rdynamic CMakeFiles/hw8_collision_detection.dir/hw8_collision_detection.cpp.o -o hw8_collision_detection  -Wl,-rpath,/home/kotoriyabe/esmini/build/EnvironmentSimulator/Libraries/esminiLib: ../../Libraries/esminiLib/libesminiLib.so 
